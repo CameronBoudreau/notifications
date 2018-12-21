@@ -1,0 +1,49 @@
+<resources>
+    <string name="app_name">InBalance</string>
+
+    <!--Main Activity resources-->
+    <string name="notifications">Notifications</string>
+    <string name="profile">Profile</string>
+
+    <!--Notification Activity resources-->
+    <string name="add_new">Add New</string>
+    <string name="active">Active</string>
+    <string name="disabled">Disabled</string>
+    <string name="name">Name</string>
+    <string name="message">Message</string>
+
+
+    <!--Notification Create Fragment resources-->
+    <string name="create_notification">Create Notification</string>
+    <string name="save_notification">Save Notification</string>
+    <string name="notification_name_hint">A name for your notification</string>
+
+    <string name="notification_category">Category:</string>
+    <string-array name="default_categories">
+        <item>None</item>
+        <item>Mind</item>
+        <item>Body</item>
+        <item>Spirit</item>
+    </string-array>
+
+    <string name="notification_message_hint">A message to include for yourself with the notification</string>
+
+    <string name="set_schedule">Set Schedule</string>
+
+    <!--Scheduler resources-->
+    <string name="scheduler_message_hint">Instance Message</string>
+
+    <string name="scheduler_days">Days to Send</string>
+    <string name="scheduler_days_hint">Which days should this notification be sent?</string>
+
+    <string name="scheduler_time">Time</string>
+    <string name="scheduler_time_hint">Time to send</string>
+    <string name="delete">Delete</string>
+
+    <string name="choose_days">Choose Days</string>
+    <string name="done">Done</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="delete_notification">Delete Notification</string>
+    <string name="edit_notification">Edit Notification</string>
+</resources>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/editText_message"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_weight="4"
+                android:ems="10"
+                android:hint="@string/scheduler_message_hint"
+                android:inputType="text|textCapSentences|textAutoCorrect"
+                android:text="@string/message"
+                android:textAlignment="viewStart"
+                tools:text="scheduler_message_hint" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="2">
+
+                <Button
+                    android:id="@+id/button_delete_schedule"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="top|right|end"
+                    android:layout_weight="1"
+                    android:background="@drawable/delete_icon"
+                    android:gravity="top|right|end"
+                    android:textSize="10sp"
+                    android:onClick="deleteItem"/>
+
+                <Switch
+                    android:id="@+id/switch_scheduler_active"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:switchMinWidth="@dimen/md_action_button_min_width"
+                    android:switchPadding="@dimen/md_action_button_corner_radius"
+                    android:text="@string/active"
+                    android:textOff="@string/disabled"
+                    android:textAlignment="textStart" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout1"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="0dp"
+            android:gravity="top|left"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button_time"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="bottom|left|start"
+                android:layout_weight="1"
+                android:ems="10"
+                android:gravity="top|center"
+                android:hint="@string/scheduler_time_hint"
+                android:maxWidth="@dimen/md_checkbox_prompt_margin_horizontal"
+                android:text="@string/scheduler_time"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                tools:text="@string/scheduler_time" />
+
+            <Button
+                android:id="@+id/button_days"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_gravity="bottom|right|end"
+                android:layout_weight="3"
+                android:ems="10"
+                android:gravity="center"
+                android:hint="@string/scheduler_days_hint"
+                android:text="@string/scheduler_days"
+                android:textSize="18sp"
+                tools:text="@string/scheduler_days" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
