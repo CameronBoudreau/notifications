@@ -1,10 +1,12 @@
 package com.inbalance.database;
 
-import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import com.inbalance.scheduler.Scheduler;
 
 public class InBalanceDatabaseHelper extends SQLiteOpenHelper {
 
@@ -30,7 +32,8 @@ public class InBalanceDatabaseHelper extends SQLiteOpenHelper {
                     + NotificationsDatabaseHelper.NOTIFICATIONS_TABLE_NAME + " TEXT, "
                     + NotificationsDatabaseHelper.NOTIFICATIONS_TABLE_CATEGORY + " TEXT, "
                     + NotificationsDatabaseHelper.NOTIFICATIONS_TABLE_MESSAGE + " TEXT, "
-                    + NotificationsDatabaseHelper.NOTIFICATIONS_TABLE_ACTIVE + " INTEGER);");
+                    + NotificationsDatabaseHelper.NOTIFICATIONS_TABLE_ACTIVE + " INTEGER, "
+                    + NotificationsDatabaseHelper.NOTIFICATIONS_TABLE_NEXT_RUN + " TEXT);");
             Log.d("DATABASEHELPER", "Notifications table created.");
         } catch (SQLiteException e) {
             Log.e("DATABASEHELPER", "Error creating Notifications table: " + e.getMessage());
@@ -54,7 +57,8 @@ public class InBalanceDatabaseHelper extends SQLiteOpenHelper {
                     + SchedulerDatabaseHelper.SCHEDULER_TABLE_DAY_7 + " INTEGER, "
                     + SchedulerDatabaseHelper.SCHEDULER_TABLE_HOUR + " INTEGER, "
                     + SchedulerDatabaseHelper.SCHEDULER_TABLE_MINUTE + " INTEGER, "
-                    + SchedulerDatabaseHelper.SCHEDULER_TABLE_ACTIVE + " INTEGER);");
+                    + SchedulerDatabaseHelper.SCHEDULER_TABLE_ACTIVE + " INTEGER, "
+                    + SchedulerDatabaseHelper.SCHEDULER_TABLE_NEXT_RUN + " TEXT);");
             Log.d("DATABASEHELPER", "Scheduler table created.");
         } catch (SQLiteException e){
             Log.e("DATABASEHELPER", "Error creating Scheduler table: " + e.getMessage());
@@ -72,7 +76,16 @@ public class InBalanceDatabaseHelper extends SQLiteOpenHelper {
         if (new_id == -1) {
             Log.e("InBalanceDatabaseHelper", "Failed to insert Notification when initalizing DB.");
         } else {
-            sdbh.insertSimpleSchedule(new_id, null, insertDays, new int[]{19, 30});
+            Scheduler scheduler = new Scheduler(
+                    -1,
+                    (int) new_id,
+                    Scheduler.SINGLE_TYPE,
+                    null,
+                    insertDays,
+                    new int[]{19, 30},
+                    1
+            );
+            sdbh.insertSimpleSchedule(scheduler);
         }
 
         long new_id2 = ndbh.insertNotification("Work Out", "body","Exercise for at least 40 minutes today!");
@@ -80,9 +93,33 @@ public class InBalanceDatabaseHelper extends SQLiteOpenHelper {
         if (new_id2 == -1) {
             Log.e("InBalanceDatabaseHelper", "Failed to insert Notification when initalizing DB.");
         } else {
-            sdbh.insertSimpleSchedule(new_id2, null, insertDays, new int[]{7, 15});
-            sdbh.insertSimpleSchedule(new_id2, null, insertDays2, new int[]{7, 0});
-            sdbh.insertSimpleSchedule(new_id2, null, insertDays3, new int[]{9, 45});
+            sdbh.insertSimpleSchedule(new Scheduler(
+                    -1,
+                    (int) new_id2,
+                    Scheduler.SINGLE_TYPE,
+                    null,
+                    insertDays,
+                    new int[]{7, 15},
+                    1
+            ));
+            sdbh.insertSimpleSchedule(new Scheduler(
+                    -1,
+                    (int) new_id2,
+                    Scheduler.SINGLE_TYPE,
+                    null,
+                    insertDays2,
+                    new int[]{7, 0},
+                    1
+            ));
+            sdbh.insertSimpleSchedule(new Scheduler(
+                    -1,
+                    (int) new_id2,
+                    Scheduler.SINGLE_TYPE,
+                    null,
+                    insertDays3,
+                    new int[]{9, 45},
+                    1
+            ));
         }
     }
 
