@@ -27,6 +27,7 @@ public class SchedulerDatabaseHelper {
     public static final String SCHEDULER_TABLE_HOUR = "HOUR";
     public static final String SCHEDULER_TABLE_MINUTE = "MINUTE";
     public static final String SCHEDULER_TABLE_ACTIVE = "ACTIVE";
+    public static final String SCHEDULER_TABLE_NEXT_RUN = "NEXT_RUN";
 
     public static SQLiteDatabase DB;
 
@@ -37,24 +38,25 @@ public class SchedulerDatabaseHelper {
         this.DB = db;
     }
 
-    public long insertSimpleSchedule(long notificationId, String message, int[] days, int[] time) {
+    public long insertSimpleSchedule(Scheduler scheduler) {
         ContentValues scheduleValues = new ContentValues();
 
         //TODO Check for 7 values in int array
 
-        scheduleValues.put(SCHEDULER_TABLE_NOTIFICATION_ID, notificationId);
+        scheduleValues.put(SCHEDULER_TABLE_NOTIFICATION_ID, scheduler.getNotificationID());
         scheduleValues.put(SCHEDULER_TABLE_TYPE, Scheduler.SINGLE_TYPE);
-        scheduleValues.put(SCHEDULER_TABLE_MESSAGE, message);
-        scheduleValues.put(SCHEDULER_TABLE_DAY_1, days[0]);
-        scheduleValues.put(SCHEDULER_TABLE_DAY_2, days[1]);
-        scheduleValues.put(SCHEDULER_TABLE_DAY_3, days[2]);
-        scheduleValues.put(SCHEDULER_TABLE_DAY_4, days[3]);
-        scheduleValues.put(SCHEDULER_TABLE_DAY_5, days[4]);
-        scheduleValues.put(SCHEDULER_TABLE_DAY_6, days[5]);
-        scheduleValues.put(SCHEDULER_TABLE_DAY_7, days[6]);
-        scheduleValues.put(SCHEDULER_TABLE_HOUR, time[0]);
-        scheduleValues.put(SCHEDULER_TABLE_MINUTE, time[1]);
-        scheduleValues.put(SCHEDULER_TABLE_ACTIVE, 1);
+        scheduleValues.put(SCHEDULER_TABLE_MESSAGE, scheduler.getMessage());
+        scheduleValues.put(SCHEDULER_TABLE_DAY_1, scheduler.getDay(0));
+        scheduleValues.put(SCHEDULER_TABLE_DAY_2, scheduler.getDay(1));
+        scheduleValues.put(SCHEDULER_TABLE_DAY_3, scheduler.getDay(2));
+        scheduleValues.put(SCHEDULER_TABLE_DAY_4, scheduler.getDay(3));
+        scheduleValues.put(SCHEDULER_TABLE_DAY_5, scheduler.getDay(4));
+        scheduleValues.put(SCHEDULER_TABLE_DAY_6, scheduler.getDay(5));
+        scheduleValues.put(SCHEDULER_TABLE_DAY_7, scheduler.getDay(6));
+        scheduleValues.put(SCHEDULER_TABLE_HOUR,  scheduler.getHour());
+        scheduleValues.put(SCHEDULER_TABLE_MINUTE, scheduler.getMinute());
+        scheduleValues.put(SCHEDULER_TABLE_ACTIVE, scheduler.getActive());
+        scheduleValues.put(SCHEDULER_TABLE_NEXT_RUN, scheduler.getNextRun());
 
         return this.DB.insert(SCHEDULER_TABLE, null, scheduleValues);
     }
@@ -148,6 +150,7 @@ public class SchedulerDatabaseHelper {
             for (Scheduler newScheduler : newSchedules) {
                 if (curScheduler.getID() == newScheduler.getID()) {
                     //Found in new items, update
+                    newScheduler.setNextRun();
                     Log.d("UpdateSchedules", "Updating new Schedule " + curScheduler.getID() + " for notification " + notificationID + " with data: " + curScheduler);
                     updateSimpleSchedule(newScheduler);
                     found = true;
@@ -166,8 +169,9 @@ public class SchedulerDatabaseHelper {
         for (Scheduler newScheduler : newSchedules) {
             if (newScheduler.getID() == -1) {
                 //Insert new item
+                newScheduler.setNextRun();
                 Log.d("UpdateSchedules", "Adding new Schedule " + newScheduler.getID() + " for notification " + notificationID + " with data: " + newScheduler);
-                insertSimpleSchedule(notificationID, newScheduler.getMessage(), newScheduler.getDays(), newScheduler.getTime());
+                insertSimpleSchedule(newScheduler);
             }
         }
 

@@ -6,8 +6,13 @@ import android.util.Log;
 
 import com.inbalance.database.SchedulerDatabaseHelper;
 
+import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class Scheduler {
 
@@ -18,6 +23,7 @@ public class Scheduler {
     private int[] days;
     private int[] time;
     private boolean active;
+    private String nextRun;
     private Context context;
 
     public SchedulerDatabaseHelper sdbh;
@@ -27,6 +33,9 @@ public class Scheduler {
 
     private static final String[] daysOfWeekShort = new String[] {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
     public static final String[] daysOfWeekLong = new String[] {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+
+    SimpleDateFormat iso8601Format = new SimpleDateFormat(
+            "YYYY-MM-DDTHH:MM:SS.SSS");
 
     public Scheduler(int id, int notificationID, String type, String message, int[] days, int[] time, int active) {
         this.id = id;
@@ -60,8 +69,20 @@ public class Scheduler {
         return this.days;
     }
 
+    public int getDay(int idx) {
+        return this.days[idx];
+    }
+
     public int[] getTime() {
         return this.time;
+    }
+
+    public int getHour() {
+        return this.time[0];
+    }
+
+    public int getMinute() {
+        return this.time[1];
     }
 
     public String getTimeString() {
@@ -171,6 +192,14 @@ public class Scheduler {
         return this.time;
     }
 
+    public void setNextRun() {
+        this.nextRun = calcNextRun();
+    }
+
+    public String getNextRun() {
+        return (this.nextRun != null) ? this.nextRun : this.calcNextRun();
+    }
+
     public String toString() {
         return  "ID: " + this.id + "\nNotificationID: " + this.notificationID + "\nType: " + this.type +"\nMessage: " + this.message + "\nDays: " + this.getDaysAsString() + "\nTime: " + this.getTimeString() + "\nActive: " + this.active;
     }
@@ -190,18 +219,78 @@ public class Scheduler {
         return daysString;
     }
 
-    public String getNextRunForNotification(int notificationID) {
-        String time = "";
+    private ArrayList<Integer> getUniqueDaysArraySundayFirst() {
+        ArrayList<Integer> days = new ArrayList<Integer>();
+        //Start list with sunday
+        if (this.days[6] == 1) {
+            days.add(1);
+        }
+        for (int i = 0; i < 6; i++) {
+            if (this.days[i] == 1) {
+                days.add(i + 2);
+            }
+        }
+        return days;
+    }
 
-        //Get all active schedulers
+    public String calcNextRun() {
+        String nextRun = "";
 
-        //Find any with day matching today
-            //If found, which have a time > now
-                //If multiple, schedule for first
-            //If not found continue to next day
-        //If not found, go to next day (or first if it was the last day)
+        Calendar currentDate = Calendar.getInstance();
+        int currentDay = currentDate.get(Calendar.DAY_OF_WEEK);
+        int currentTime = Integer.parseInt(Integer.toString(currentDate.get(Calendar.HOUR_OF_DAY)) + Integer.toString(currentDate.get(Calendar.MINUTE)));
 
+        int schedulerTime = Integer.parseInt(Integer.toString(this.time[0]) + Integer.toString(this.time[1]));
+        ArrayList<Integer> activeDays = getUniqueDaysArraySundayFirst();
 
-        return time;
+        //Find next date
+        if (activeDays.contains(currentDay) && schedulerTime > currentTime) {
+            //Found day matching current and time is after now, schedule for today
+            currentDate.set(Calendar.HOUR_OF_DAY, this.time[0]);
+            currentDate.set(Calendar.MINUTE, this.time[1]);
+            currentDate.set(Calendar.SECOND, 0);
+
+            nextRun = iso8601Format.format(currentDate);
+        } else if (activeDays.size() < 2) {
+            //Only one day to run, schedule for next occurrence of that day
+            int day = activeDays.get(0);
+
+            nextRun = setRunToDateOfNextDay(day);
+        } else {
+            //Find next day
+            int day = -1;
+
+            if (currentDay != 7) {
+                for (int i = currentDay + 1; i < 8; i++) {
+                    if (activeDays.contains(i)) {
+                        day = i;
+                        break;
+                    }
+                }
+            }
+            //not found until end of week, get first instance in list
+            day = day == -1 ? activeDays.get(0) : day;
+
+            nextRun = setRunToDateOfNextDay(day);
+        }
+
+        return nextRun;
+    }
+
+    private String setRunToDateOfNextDay(int day) {
+        LocalDate nextDay = LocalDate.now(ZoneId.of("UTC")).with(TemporalAdjusters.next(DayOfWeek.of(day)));
+        Calendar date = Calendar.getInstance();
+
+        //Set Date Fields
+        date.set(Calendar.YEAR, nextDay.getYear());
+        date.set(Calendar.MONTH, nextDay.getMonthValue());
+        date.set(Calendar.DAY_OF_YEAR, nextDay.getDayOfYear());
+
+        //Set Time Fields
+        date.set(Calendar.HOUR_OF_DAY, this.time[0]);
+        date.set(Calendar.MINUTE, this.time[1]);
+        date.set(Calendar.SECOND, 0);
+
+        return iso8601Format.format(date);
     }
 }

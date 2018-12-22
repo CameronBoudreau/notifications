@@ -1,9 +1,10 @@
 package com.inbalance.notifications;
 
 import com.inbalance.inbalance.R;
+import com.inbalance.scheduler.Scheduler;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.ArrayList;
 
 public class Notification  implements Serializable {
     private int id;
@@ -105,5 +106,29 @@ public class Notification  implements Serializable {
 
     public String toString() {
         return  "ID: " + this.id + "\nName: " + this.name + "\nCategory: " + this.category +"\nMessage: " + this.message + "\nActive: " + this.active;
+    }
+
+    public String getNextRun() {
+        return this.nextRun != null ? this.nextRun : this.calcNextRun() ;
+    }
+
+    public static String calcNextRun(ArrayList<Scheduler> schedules) {
+        String time = "";
+
+
+        //Find closest time in schedulers
+        //check that nextRun > now or recalc
+
+        return time;
+    }
+
+    public String calcNextRun() {
+        String time = "";
+
+
+        //Find closest time in schedulers
+        //check that nextRun > now or recalc
+
+        return time;
     }
 }

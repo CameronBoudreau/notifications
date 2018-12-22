@@ -3,6 +3,11 @@ package com.inbalance.notifications;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import com.evernote.android.job.JobManager;
 import com.inbalance.database.InBalanceDatabaseHelper;
@@ -14,19 +19,11 @@ import com.inbalance.scheduler.Scheduler;
 import com.inbalance.scheduler.SchedulerListFragment;
 import com.inbalance.utils.NotificationJobCreator;
 
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
-
-import java.io.Serializable;
 import java.util.ArrayList;
-
-import androidx.appcompat.widget.Toolbar;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -112,6 +109,13 @@ public class NotificationsActivity extends AppCompatActivity implements
                 FragmentManager fm = getSupportFragmentManager();
                 Fragment frag =  fm.findFragmentById(R.id.notification_fragment_container);
 
+                SchedulerListFragment schedulerFrag;
+                if (frag instanceof NotificationCreateFragment) {
+                    schedulerFrag = (SchedulerListFragment) frag.getChildFragmentManager().findFragmentById(R.id.fragmentSchedulerList);
+                } else {
+                    schedulerFrag = (SchedulerListFragment) getSupportFragmentManager().findFragmentById(R.id.notification_edit_scheduler_fragment_container);
+                }
+
                 if (frag instanceof NotificationCreateFragment) {
                     notification = new Notification(
                             -1,
@@ -119,7 +123,7 @@ public class NotificationsActivity extends AppCompatActivity implements
                             ((NotificationCreateFragment) frag).category,
                             ((NotificationCreateFragment) frag).message,
                             1,
-                            null
+                            Notification.calcNextRun(schedulerFrag.schedulerList)
                     );
 
                     //Save notification
@@ -129,7 +133,7 @@ public class NotificationsActivity extends AppCompatActivity implements
                         Toast toast = Toast.makeText(getApplicationContext(), "Could not insert notification: Database unavailable", Toast.LENGTH_SHORT);
                         toast.show();
                     } else {
-                        NotificationSchedulerJob.scheduleJob(notification.getID(), Scheduler.getNextRunForNotification(notification.getID()));
+                        NotificationSchedulerJob.scheduleJob(notification.getID(), notification.getNextRun());
                     }
                 } else {
                     notification = ((NotificationEditFragment) frag).notification;
@@ -141,12 +145,6 @@ public class NotificationsActivity extends AppCompatActivity implements
                 }
 
                 if (result != -1) {
-                    SchedulerListFragment schedulerFrag;
-                    if (frag instanceof NotificationCreateFragment) {
-                        schedulerFrag = (SchedulerListFragment) frag.getChildFragmentManager().findFragmentById(R.id.fragmentSchedulerList);
-                    } else {
-                        schedulerFrag = (SchedulerListFragment) getSupportFragmentManager().findFragmentById(R.id.notification_edit_scheduler_fragment_container);
-                    }
                     if (schedulerFrag != null) {
                         //Use notification ID to save scheduler items
                         Log.d("SaveNotificationEdit", "Old SchedulerList: " + this.oldSchedulerList);
