@@ -56,7 +56,7 @@ public class SchedulerDatabaseHelper {
         scheduleValues.put(SCHEDULER_TABLE_HOUR,  scheduler.getHour());
         scheduleValues.put(SCHEDULER_TABLE_MINUTE, scheduler.getMinute());
         scheduleValues.put(SCHEDULER_TABLE_ACTIVE, scheduler.getActive());
-        scheduleValues.put(SCHEDULER_TABLE_NEXT_RUN, scheduler.getNextRun());
+        scheduleValues.put(SCHEDULER_TABLE_NEXT_RUN, scheduler.calcNextRun());
 
         return this.DB.insert(SCHEDULER_TABLE, null, scheduleValues);
     }
@@ -79,6 +79,7 @@ public class SchedulerDatabaseHelper {
         scheduleValues.put(SCHEDULER_TABLE_HOUR, time[0]);
         scheduleValues.put(SCHEDULER_TABLE_MINUTE, time[1]);
         scheduleValues.put(SCHEDULER_TABLE_ACTIVE, scheduler.getActive());
+        scheduleValues.put(SCHEDULER_TABLE_NEXT_RUN, scheduler.calcNextRun());
 
         return this.DB.update(SCHEDULER_TABLE, scheduleValues, SCHEDULER_TABLE_ID + "=?", new String[] {Integer.toString(scheduler.getID())});
     }
@@ -127,10 +128,10 @@ public class SchedulerDatabaseHelper {
                 int[] time = Scheduler.getTimeArrayFromCursor(cursor, pos);
 
                 Scheduler schedulerItem = new Scheduler(
-                        cursor.getInt(0),
-                        cursor.getInt(1),
-                        cursor.getString(2),
-                        cursor.getString(3),
+                        cursor.getInt(cursor.getColumnIndex(SCHEDULER_TABLE_ID)),
+                        cursor.getInt(cursor.getColumnIndex(SCHEDULER_TABLE_NOTIFICATION_ID)),
+                        cursor.getString(cursor.getColumnIndex(SCHEDULER_TABLE_TYPE)),
+                        cursor.getString(cursor.getColumnIndex(SCHEDULER_TABLE_MESSAGE)),
                         days,
                         time,
                         cursor.getInt(6)
@@ -169,7 +170,7 @@ public class SchedulerDatabaseHelper {
         for (Scheduler newScheduler : newSchedules) {
             if (newScheduler.getID() == -1) {
                 //Insert new item
-                newScheduler.setNextRun();
+                newScheduler.setNotificationID(notificationID);
                 Log.d("UpdateSchedules", "Adding new Schedule " + newScheduler.getID() + " for notification " + notificationID + " with data: " + newScheduler);
                 insertSimpleSchedule(newScheduler);
             }
@@ -193,10 +194,5 @@ public class SchedulerDatabaseHelper {
             );
         }
         return done;
-    }
-
-    public Scheduler[] getSimple(Boolean unique, String query, String[] columns, String[] orderBy) {
-        //TODO: create method
-        return schedulerList;
     }
 }

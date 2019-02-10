@@ -28,17 +28,18 @@ public class NotificationsDatabaseHelper {
         this.DB = db;
     }
 
-    public long insertNotification(String name, String category, String message) {
+    public long insertNotification(Notification notification) {
         ContentValues notificationValues = new ContentValues();
 
-        if (category == null | category == "") {
-            category = "default";
+        if (notification.getCategory() == null | notification.getCategory() == "") {
+            notification.setCategory("none");
         }
 
-        notificationValues.put(NOTIFICATIONS_TABLE_NAME, name);
-        notificationValues.put(NOTIFICATIONS_TABLE_CATEGORY, category);
-        notificationValues.put(NOTIFICATIONS_TABLE_MESSAGE, message);
+        notificationValues.put(NOTIFICATIONS_TABLE_NAME, notification.getName());
+        notificationValues.put(NOTIFICATIONS_TABLE_CATEGORY, notification.getCategory());
+        notificationValues.put(NOTIFICATIONS_TABLE_MESSAGE, notification.getMessage());
         notificationValues.put(NOTIFICATIONS_TABLE_ACTIVE, 1);
+        notificationValues.put(NOTIFICATIONS_TABLE_NEXT_RUN, notification.getNextRun());
 
         return DB.insert(NOTIFICATIONS_TABLE, null, notificationValues);
     }

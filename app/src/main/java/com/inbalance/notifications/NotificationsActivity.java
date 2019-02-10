@@ -104,7 +104,7 @@ public class NotificationsActivity extends AppCompatActivity implements
                 return true;
             case R.id.action_save_notification:
                 Notification notification;
-                long result;
+                long newID;
 
                 FragmentManager fm = getSupportFragmentManager();
                 Fragment frag =  fm.findFragmentById(R.id.notification_fragment_container);
@@ -127,28 +127,30 @@ public class NotificationsActivity extends AppCompatActivity implements
                     );
 
                     //Save notification
-                    notification.setID((int) ndbh.insertNotification(notification.getName(), notification.getCategory(), notification.getMessage()));
-                    result = notification.getID();
-                    if (result == -1) {
+                    notification.setID((int) ndbh.insertNotification(notification));
+                    newID = notification.getID();
+                    if (newID == -1) {
                         Toast toast = Toast.makeText(getApplicationContext(), "Could not insert notification: Database unavailable", Toast.LENGTH_SHORT);
                         toast.show();
                     } else {
                         NotificationSchedulerJob.scheduleJob(notification.getID(), notification.getNextRun());
                     }
                 } else {
+                    //Updating existing notification
                     notification = ((NotificationEditFragment) frag).notification;
-                    result = ndbh.updateNotification(notification);
-                    if (result == -1) {
+                    int result = ndbh.updateNotification(notification);
+                    if (result != 1) {
                         Toast toast = Toast.makeText(getApplicationContext(), "Could not update notification: Database unavailable", Toast.LENGTH_SHORT);
                         toast.show();
                     }
+                    newID = notification.getID();
                 }
 
-                if (result != -1) {
+                if (newID != -1) {
                     if (schedulerFrag != null) {
                         //Use notification ID to save scheduler items
-                        Log.d("SaveNotificationEdit", "Old SchedulerList: " + this.oldSchedulerList);
-                        sdbh.updateSchedulesForNotification(notification.getID(), schedulerFrag.schedulerList);
+                        Log.d("SaveNotificationEdit", "Saving Schedules for ID: " + newID);
+                        sdbh.updateSchedulesForNotification((int) newID, schedulerFrag.schedulerList);
                     } else {
                         Log.d("SaveNotificationEdit", "Failed to get scheduler frag: " + schedulerFrag);
                         Toast toast = Toast.makeText(getApplicationContext(), "Could not update Schedules for Notification: Unable to find scheduler list fragment", Toast.LENGTH_SHORT);
@@ -219,8 +221,10 @@ public class NotificationsActivity extends AppCompatActivity implements
 
     @Override
     public void onClick(View v) {
+        Log.d("OnClickNotifAct", "Click Listener Invoked for view: " + v.getTag());
         switch (v.getId()) {
             case R.id.button_edit_notification_delete:
+                Log.d("OnClickEditNotif", "Deleting notification : " + v.getTag());
                 int done = ndbh.deleteNotification((int) v.getTag());
 
                 if (done == 0) {

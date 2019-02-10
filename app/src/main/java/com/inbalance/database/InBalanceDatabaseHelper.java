@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.inbalance.notifications.Notification;
 import com.inbalance.scheduler.Scheduler;
 
 public class InBalanceDatabaseHelper extends SQLiteOpenHelper {
@@ -68,8 +69,8 @@ public class InBalanceDatabaseHelper extends SQLiteOpenHelper {
         SchedulerDatabaseHelper sdbh = new SchedulerDatabaseHelper(getDB());
 
         Log.d("DATABASEHELPER", "Helpers initialized.");
-
-        long new_id = ndbh.insertNotification("Read", "","Have you read for at least 30 minutes today?");
+        Notification notification1 = new Notification(-1, "Read", "mind", "Have you read for at least 30 minutes today?", 1, null);
+        long new_id = ndbh.insertNotification(notification1);
         int[] insertDays = new int[]{1, 1, 1, 1, 1, 1, 1};
         int[] insertDays2 = new int[]{0, 0, 0, 0, 0, 1, 1};
         int[] insertDays3 = new int[]{0, 1, 0, 1, 0, 1, 0};
@@ -88,7 +89,8 @@ public class InBalanceDatabaseHelper extends SQLiteOpenHelper {
             sdbh.insertSimpleSchedule(scheduler);
         }
 
-        long new_id2 = ndbh.insertNotification("Work Out", "body","Exercise for at least 40 minutes today!");
+        Notification notification2 = new Notification(-1, "Work Out", "body","Exercise for at least 40 minutes today!", 1, null);
+        long new_id2 = ndbh.insertNotification(notification2);
 
         if (new_id2 == -1) {
             Log.e("InBalanceDatabaseHelper", "Failed to insert Notification when initalizing DB.");
