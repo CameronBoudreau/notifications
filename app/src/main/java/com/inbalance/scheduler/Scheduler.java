@@ -241,6 +241,8 @@ public class Scheduler {
     public String calcNextRun() {
         String nextRun = "";
 
+        //TODO: Fix this to calc correctly
+
 //        Calendar currentDate = Calendar.getInstance();
 //        int currentDay = currentDate.get(Calendar.DAY_OF_WEEK);
 //        int currentTime = Integer.parseInt(Integer.toString(currentDate.get(Calendar.HOUR_OF_DAY)) + Integer.toString(currentDate.get(Calendar.MINUTE)));
@@ -296,6 +298,7 @@ public class Scheduler {
         date.set(Calendar.MINUTE, this.time[1]);
         date.set(Calendar.SECOND, 0);
 
+        //TODO: Debug output here
 //        return iso8601Format.format(date);
         return "";
     }

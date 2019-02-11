@@ -29,9 +29,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 public class NotificationsActivity extends AppCompatActivity implements
-        NotificationsListFragment.itemListener,
-        View.OnClickListener
-//        SchedulerListFragment.SchedulerListFragInterface
+        NotificationsListFragment.itemListener
 {
     private Toolbar toolbar;
     private SQLiteDatabase DB;
@@ -169,7 +167,6 @@ public class NotificationsActivity extends AppCompatActivity implements
                 transaction.replace(R.id.notification_fragment_container, newListFragment);
                 transaction.addToBackStack(null);
 
-                // Commit the transaction
                 transaction.commit();
                 this.oldSchedulerList = null;
 
@@ -219,8 +216,7 @@ public class NotificationsActivity extends AppCompatActivity implements
         transaction.commit();
     }
 
-    @Override
-    public void onClick(View v) {
+    public void onClickNoficationDelete(View v) {
         Log.d("OnClickNotifAct", "Click Listener Invoked for view: " + v.getTag());
         switch (v.getId()) {
             case R.id.button_edit_notification_delete:
@@ -250,19 +246,4 @@ public class NotificationsActivity extends AppCompatActivity implements
                 break;
         }
     }
-
-//    @Override
-//    public void setSchedulerList(ArrayList<Scheduler> schedulerList) {
-//        Log.d("SetSchedulerList", "Setting scheduler list to: " + schedulerList);
-//        this.oldSchedulerList = schedulerList;
-//    }
-
-//    @Override
-//    public void onAttachFragment(Fragment fragment) {
-//        if (fragment instanceof SchedulerListFragment) {
-//            SchedulerListFragment schedulerListFragment = (SchedulerListFragment) fragment;
-//            schedulerListFragment.setSchedulerListFragInterfaceCallback(this);
-//        }
-//    }
-
 }

@@ -31,7 +31,6 @@ public class NotificationEditFragment extends Fragment {
 
     public Notification notification;
     public ArrayList<Scheduler> schedulerList;
-    public NotificationsActivity callback;
 
     public NotificationEditFragment() {
         // Required empty public constructor
@@ -129,7 +128,6 @@ public class NotificationEditFragment extends Fragment {
         });
 
         buttonDelete.setTag(notification.getID());
-        buttonDelete.setOnClickListener(callback);
 
         FragmentManager fm = getActivity().getSupportFragmentManager();
         Fragment frag =  fm.findFragmentById(R.id.notification_fragment_container);
@@ -146,5 +144,4 @@ public class NotificationEditFragment extends Fragment {
 
         return view;
     }
-
 }

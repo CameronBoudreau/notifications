@@ -61,8 +61,6 @@ public class NotificationsListAdapter extends ArrayAdapter {
 
         ViewHolder holder;
 
-//        Log.d("NotificListAdap","convertView: " + convertView);
-
         if (convertView == null) {
             // If there's no view to re-use, inflate a brand new view for row
             holder = new ViewHolder();
@@ -84,11 +82,8 @@ public class NotificationsListAdapter extends ArrayAdapter {
             convertView.setTag(holder);
         } else {
             // View is being recycled, retrieve the viewHolder object from tag
-//            Log.d("NotificListAdap","Tag: " + convertView.getTag());
             holder = (ViewHolder) convertView.getTag();
         }
-
-//        Log.d("NotificListAdap","holder before setting: " + holder);
 
         holder.imageView.setImageResource(notification.getCategoryImageID());
         holder.nameView.setText(notification.getName());

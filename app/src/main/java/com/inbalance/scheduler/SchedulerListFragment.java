@@ -42,7 +42,6 @@ public class SchedulerListFragment extends Fragment implements
     public SchedulerListAdapter adapter;
     private  ArrayList<String> daysString;
     private SchedulerDatabaseHelper sdbh;
-//    private SchedulerListFragInterface listInterfaceCallback;
 
     public int notificationID = -1;
 
@@ -59,14 +58,6 @@ public class SchedulerListFragment extends Fragment implements
 
         return frag;
     }
-
-//    public interface SchedulerListFragInterface {
-//        void setSchedulerList(ArrayList<Scheduler> schedulerList);
-//    }
-
-//    public void setSchedulerListFragInterfaceCallback(NotificationsActivity activity) {
-//        this.listInterfaceCallback = activity;
-//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -96,9 +87,7 @@ public class SchedulerListFragment extends Fragment implements
 
                 setSchedulerList(cursor);
 
-//                Log.d("SchedulerListFrag", "Scheduler length: " + this.schedulerList.size());
-
-                //TODO: make sure removing this is OK - it's in onDelete.
+                //TODO: make sure removing this is OK - it's in onDestroy.
                 cursor.close();
                 DB.close();
             } catch (SQLiteException e) {
